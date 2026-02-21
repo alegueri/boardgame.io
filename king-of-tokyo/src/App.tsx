@@ -4,6 +4,7 @@ import { Local } from 'boardgame.io/multiplayer';
 import { KingOfTokyo } from './game/game';
 import Board from './components/Board';
 import { HowToPlayGrid, HowToPlayDrawer } from './components/HowToPlay';
+import { CardBrowserDrawer } from './components/CardBrowser';
 
 // boardgame.io Client returns a React component class
 type GameClientComponent = ReturnType<typeof Client>;
@@ -66,11 +67,19 @@ export default function App() {
   const [activePlayer, setActivePlayer] = useState<string>('0');
   const [GameClient, setGameClient] = useState<GameClientComponent | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [cardBrowserOpen, setCardBrowserOpen] = useState(false);
 
   function handleStart(n: number) {
     setNumPlayers(n);
     setGameClient(() => buildClient(n));
     setActivePlayer('0');
+  }
+
+  function handleQuit() {
+    setGameClient(null);
+    setNumPlayers(null);
+    setDrawerOpen(false);
+    setCardBrowserOpen(false);
   }
 
   if (!GameClient || numPlayers === null) {
@@ -91,18 +100,35 @@ export default function App() {
             </button>
           ))}
         </div>
-        <button
-          className="btn btn-rules"
-          onClick={() => setDrawerOpen(true)}
-          title="How to play"
-        >
-          📖 Rules
-        </button>
+        <div className="topbar-right">
+          <button
+            className="btn btn-rules"
+            onClick={() => setCardBrowserOpen(true)}
+            title="Browse all cards"
+          >
+            🃏 Cards
+          </button>
+          <button
+            className="btn btn-rules"
+            onClick={() => setDrawerOpen(true)}
+            title="How to play"
+          >
+            📖 Rules
+          </button>
+          <button
+            className="btn btn-quit"
+            onClick={handleQuit}
+            title="Return to main menu"
+          >
+            ✕ Quit
+          </button>
+        </div>
       </div>
 
       <GameClient playerID={activePlayer} />
 
       <HowToPlayDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <CardBrowserDrawer open={cardBrowserOpen} onClose={() => setCardBrowserOpen(false)} />
     </div>
   );
 }

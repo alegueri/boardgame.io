@@ -17,7 +17,7 @@ export const HOW_TO_PLAY_ITEMS = [
   {
     icon: '⚡',
     title: 'Lightning = Energy',
-    text: 'Collect energy cubes to spend on Power Cards (coming soon!) for special abilities.',
+    text: 'Collect energy cubes to spend on Power Cards. Buy from the 3-card market on your turn after rolling. Pay 2⚡ to sweep and reveal 3 new cards. Browse all 64 cards with the 🃏 Cards button.',
   },
   {
     icon: '①②③',

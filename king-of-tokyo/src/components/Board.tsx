@@ -4,10 +4,23 @@ import MonsterPanel from './MonsterPanel';
 import DiceArea from './DiceArea';
 import TokyoBoard from './TokyoBoard';
 import TurnInfo from './TurnInfo';
+import MarketArea from './MarketArea';
+import PlayerCards from './PlayerCards';
 
 type KoTBoardProps = BoardProps<GameState>;
 
+type KoTMoves = {
+  rollDice: () => void;
+  toggleKeep: (i: number) => void;
+  finishRolling: () => void;
+  endMyTurn: () => void;
+  decideYield: (v: boolean) => void;
+  buyCard: (index: number) => void;
+  sweepMarket: () => void;
+};
+
 export default function Board({ G, ctx, moves, playerID }: KoTBoardProps) {
+  const typedMoves = moves as unknown as KoTMoves;
   const isMyTurn = ctx.currentPlayer === playerID;
   const myMonster = G.monsters.find(m => m.id === playerID);
 
@@ -79,13 +92,13 @@ export default function Board({ G, ctx, moves, playerID }: KoTBoardProps) {
           <div className="yield-buttons">
             <button
               className="btn btn-yield"
-              onClick={() => (moves as unknown as { decideYield: (v: boolean) => void }).decideYield(true)}
+              onClick={() => typedMoves.decideYield(true)}
             >
               🏃 Yield Tokyo (take {G.pendingDamage} damage & flee)
             </button>
             <button
               className="btn btn-stay"
-              onClick={() => (moves as unknown as { decideYield: (v: boolean) => void }).decideYield(false)}
+              onClick={() => typedMoves.decideYield(false)}
             >
               💪 Stay in Tokyo (take {G.pendingDamage} damage)
             </button>
@@ -103,15 +116,27 @@ export default function Board({ G, ctx, moves, playerID }: KoTBoardProps) {
         <DiceArea
           G={G}
           ctx={ctx}
-          moves={moves as unknown as { rollDice: () => void; toggleKeep: (i: number) => void; finishRolling: () => void }}
+          moves={typedMoves}
           isMyTurn={isMyTurn}
         />
+      )}
+
+      <MarketArea
+        G={G}
+        currentPlayerId={playerID ?? '0'}
+        isMyTurn={isMyTurn}
+        onBuy={(i) => typedMoves.buyCard(i)}
+        onSweep={() => typedMoves.sweepMarket()}
+      />
+
+      {playerID && (
+        <PlayerCards G={G} playerId={playerID} />
       )}
 
       {isMyTurn && G.resolved && G.pendingDamage === 0 && (
         <button
           className="btn btn-end-turn"
-          onClick={() => (moves as unknown as { endMyTurn: () => void }).endMyTurn()}
+          onClick={() => typedMoves.endMyTurn()}
         >
           ➡ End Turn
         </button>
