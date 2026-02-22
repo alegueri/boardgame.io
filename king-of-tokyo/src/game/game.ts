@@ -4,7 +4,7 @@ import { MONSTERS } from './monsters';
 import { resolveDice } from './dice';
 import { DICE_FACES, NUM_DICE, MAX_HEALTH, VP_TO_WIN, MAX_ROLLS } from './constants';
 import type { GameState, Monster } from './types';
-import { CARDS, CARD_MAP } from './cards';
+import { CARD_DATA as CARDS, CARD_DATA_MAP as CARD_MAP } from './cardData';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

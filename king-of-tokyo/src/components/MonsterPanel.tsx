@@ -4,9 +4,10 @@ import type { Monster } from '../game/types';
 interface Props {
   monster: Monster;
   isActive: boolean;
+  playerName?: string;
 }
 
-export default function MonsterPanel({ monster, isActive }: Props) {
+export default function MonsterPanel({ monster, isActive, playerName }: Props) {
   if (!monster.alive) {
     return (
       <div className="monster-panel dead">
@@ -14,6 +15,7 @@ export default function MonsterPanel({ monster, isActive }: Props) {
           <span className="monster-emoji">{monster.emoji}</span>
           <span className="monster-name">{monster.name}</span>
         </div>
+        {playerName && <div className="monster-player-name">{playerName}</div>}
         <div className="monster-dead-label">Eliminated</div>
       </div>
     );
@@ -29,6 +31,7 @@ export default function MonsterPanel({ monster, isActive }: Props) {
         <span className="monster-name">{monster.name}</span>
         {monster.inTokyo && <span className="tokyo-badge">TOKYO</span>}
       </div>
+      {playerName && <div className="monster-player-name">{playerName}</div>}
 
       <div className="stat-row">
         <span className="stat-label">HP</span>
