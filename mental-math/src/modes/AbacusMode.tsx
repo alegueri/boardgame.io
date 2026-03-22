@@ -17,169 +17,187 @@ function makeProblem(maxDigits: number) {
   return randomInt(min, max);
 }
 
-// ── Soroban Lesson ─────────────────────────────────────────────────────────────
+// ── Soroban Lesson ──────────────────────────────────────────────
 
 function AbacusLesson({ onBack }: { onBack: () => void }) {
   const [page, setPage] = useState(0);
+
   const pages = [
-    <div key="p0" className="mm-abacus-lesson">
-      <div className="mm-abacus-lesson-section">
-        <h3>🧮 What is a Soroban?</h3>
-        <p>
-          The soroban is the Japanese abacus, refined over centuries into one of the most powerful mental arithmetic tools ever created.
-          Elite practitioners can add 15 three-digit numbers in under 1.5 seconds — purely in their heads, by visualizing an imaginary abacus.
-        </p>
-        <p>
-          Each <strong>column</strong> represents a place value: ones, tens, hundreds, etc.
-          Each column has <strong>one heaven bead</strong> (worth 5) above the divider
-          and <strong>four earth beads</strong> (worth 1 each) below it.
-        </p>
-        <p>
-          A bead is <strong>active</strong> (counts toward the value) when it is pushed toward the divider:
-          heaven bead moves <em>down</em>, earth beads move <em>up</em>.
-        </p>
-        <div className="mm-abacus-bead-guide">
-          <div className="mm-abacus-bead-item">
-            <div className="mm-bead-swatch" /> Active (glowing, near divider)
+    {
+      title: 'What is a Soroban?',
+      emoji: '🧮',
+      body: (
+        <>
+          <p className="mm-setup-desc">
+            The soroban is the Japanese abacus — one of the most powerful mental arithmetic tools ever created.
+            Elite practitioners can add fifteen 3-digit numbers in under 1.5 seconds, purely in their heads.
+          </p>
+          <div className="mm-abacus-info-card">
+            <div className="mm-abacus-info-row">
+              <span className="mm-abacus-info-label">Heaven bead</span>
+              <span className="mm-abacus-info-val">worth <strong>5</strong> — slides down to divider when active</span>
+            </div>
+            <div className="mm-abacus-info-row">
+              <span className="mm-abacus-info-label">Earth beads</span>
+              <span className="mm-abacus-info-val">worth <strong>1 each</strong> — slide up to divider when active</span>
+            </div>
+            <div className="mm-abacus-info-row">
+              <span className="mm-abacus-info-label">Column max</span>
+              <span className="mm-abacus-info-val">5 + 4 = <strong>9</strong> ✓ perfect for base-10</span>
+            </div>
           </div>
-          <div className="mm-abacus-bead-item">
-            <div className="mm-bead-swatch inactive" /> Inactive (dark, away from divider)
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--t3)' }}>Example: heaven + 3 earth = 8</p>
+            <AbacusView value={8} minColumns={1} />
           </div>
-        </div>
-      </div>
-      <div className="mm-abacus-lesson-section">
-        <h3>Reading a column</h3>
-        <p>
-          Column value = <strong>(heaven bead active? +5 : 0) + number of active earth beads</strong>
-        </p>
-        <p>
-          Example: heaven active + 3 earth active = <strong>5 + 3 = 8</strong>.
-          Maximum per column: 5+4 = 9. ✓ Perfect for base-10.
-        </p>
-        <AbacusView value={8} minColumns={1} />
-      </div>
-    </div>,
-
-    <div key="p1" className="mm-abacus-lesson">
-      <div className="mm-abacus-lesson-section">
-        <h3>📍 Place Values</h3>
-        <p>
-          Columns run right to left: ones → tens → hundreds → thousands.
-          The total value of the abacus is the sum of each column's digit × its place value.
-        </p>
-        <p>Try reading these examples on the abacus below:</p>
-        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ color: 'var(--mm-text-muted)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>47</div>
-            <AbacusView value={47} minColumns={2} />
+        </>
+      ),
+    },
+    {
+      title: 'Place Values',
+      emoji: '📍',
+      body: (
+        <>
+          <p className="mm-setup-desc">
+            Columns run right → left: ones, tens, hundreds, thousands.
+            The total is the sum of each column's digit × its place value.
+          </p>
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {[{ v: 47, cols: 2 }, { v: 163, cols: 3 }, { v: 8, cols: 1 }].map(({ v, cols }) => (
+              <div key={v} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.03em' }}>{v}</span>
+                <AbacusView value={v} minColumns={cols} />
+              </div>
+            ))}
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ color: 'var(--mm-text-muted)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>163</div>
-            <AbacusView value={163} minColumns={3} />
+          <div className="mm-abacus-info-card">
+            <p style={{ fontSize: '0.85rem', color: 'var(--t2)', lineHeight: 1.7 }}>
+              <strong>Complementary addition:</strong> to add 3 when only 1 earth bead is free —
+              activate the heaven bead (+5) and deactivate 2 earth beads (−2). Net: +3.
+              These complementary moves become muscle memory with practice.
+            </p>
           </div>
-        </div>
-      </div>
-      <div className="mm-abacus-lesson-section">
-        <h3>Adding on the soroban</h3>
-        <p>
-          To add 3 to a column: push 3 earth beads toward the divider.
-          If only 1 earth bead is free, use <strong>complementary addition</strong>:
-          activate the heaven bead (+5) and deactivate 2 earth beads (−2), net +3.
-        </p>
-        <p>
-          The brain learns these complementary moves as muscle memory — this is how speed comes.
-          Practice until "add 7 to 6" doesn't require thought: just the moves.
-        </p>
-      </div>
-    </div>,
-
-    <div key="p2" className="mm-abacus-lesson">
-      <div className="mm-abacus-lesson-section">
-        <h3>🧠 Mental Abacus (Anzan)</h3>
-        <p>
-          <strong>Anzan</strong> (暗算) means "dark calculation" — doing soroban arithmetic purely in your mind,
-          with no physical device. You visualize the bead positions and mentally move them.
-        </p>
-        <p>
-          Research shows anzan uses the brain's <strong>visuospatial cortex</strong> rather than the verbal system.
-          This is why experts can calculate while holding a conversation — they're using a different mental channel.
-        </p>
-        <p>
-          The path: physical abacus → anzan. First, build the movements until they're reflexive on a real (or screen) abacus.
-          Then close your eyes and visualize. The Flash Anzan mode trains this directly.
-        </p>
-      </div>
-      <div className="mm-abacus-lesson-section">
-        <h3>🏆 How to get fast</h3>
-        <p>
-          1. <strong>Read drill</strong> — look at the abacus, say the number instantly. Target: under 1 second.<br />
-          2. <strong>Build drill</strong> — hear/see a number, set the beads. Target: under 2 seconds.<br />
-          3. <strong>Flash Anzan</strong> — numbers flash briefly, add them mentally. Start slow (1000ms), work toward 300ms.<br />
-          4. Eyes-closed practice — visualize the abacus during your commute or idle moments.
-        </p>
-      </div>
-    </div>,
-
-    <div key="p3" className="mm-abacus-lesson">
-      <div className="mm-abacus-lesson-section">
-        <h3>✋ Chisanbop — Finger Mental Math</h3>
-        <p>
-          Chisanbop (치산법) is a Korean finger-counting technique that turns your hands into a portable abacus.
-          Each finger represents a digit, and you can represent numbers 0–99 with both hands.
-        </p>
-        <div className="mm-chisanbop-hands">
-          <div className="mm-chisanbop-hand">
-            <h4>Right Hand (ones)</h4>
-            <ul>
-              <li>Index finger = 1</li>
-              <li>Middle finger = 2</li>
-              <li>Ring finger = 3</li>
-              <li>Pinky = 4</li>
-              <li>Right thumb = 5</li>
-            </ul>
+        </>
+      ),
+    },
+    {
+      title: 'Mental Abacus (Anzan)',
+      emoji: '🧠',
+      body: (
+        <>
+          <p className="mm-setup-desc">
+            <strong>Anzan</strong> (暗算) — "dark calculation" — means doing soroban arithmetic purely in your mind,
+            visualizing bead positions without a physical device.
+          </p>
+          <div className="mm-abacus-info-card">
+            <div className="mm-abacus-info-row">
+              <span className="mm-abacus-info-label">Why it works</span>
+              <span className="mm-abacus-info-val">Uses the visuospatial cortex, not the verbal system — you can calculate while talking</span>
+            </div>
+            <div className="mm-abacus-info-row">
+              <span className="mm-abacus-info-label">The path</span>
+              <span className="mm-abacus-info-val">Physical → reflexive → eyes-closed visualization</span>
+            </div>
           </div>
-          <div className="mm-chisanbop-hand">
-            <h4>Left Hand (tens)</h4>
-            <ul>
-              <li>Index finger = 10</li>
-              <li>Middle finger = 20</li>
-              <li>Ring finger = 30</li>
-              <li>Pinky = 40</li>
-              <li>Left thumb = 50</li>
-            </ul>
+          <div className="mm-abacus-steps">
+            {['Read drill — see abacus, say number. Target: under 1 second.',
+              'Build drill — see number, set beads. Target: under 2 seconds.',
+              'Flash Anzan — numbers flash briefly, add them mentally.',
+              'Eyes-closed — visualize during commute or idle moments.'].map((s, i) => (
+              <div key={i} className="mm-lesson-step">
+                <span className="mm-lesson-step-num">{i + 1}</span>
+                <span className="mm-lesson-step-text">{s}</span>
+              </div>
+            ))}
           </div>
-        </div>
-        <p>
-          Press fingers down on a surface to "activate" them. The sum of all pressed fingers = your number.
-          To show 37: left ring (30) + right thumb (5) + right index+middle (1+2=2) → 37.
-        </p>
-        <p>
-          Use Chisanbop to maintain a running total during mental addition. Your fingers hold intermediate values
-          so your verbal memory stays free for the next operation.
-        </p>
-      </div>
-    </div>,
+        </>
+      ),
+    },
+    {
+      title: 'Chisanbop — Finger Math',
+      emoji: '✋',
+      body: (
+        <>
+          <p className="mm-setup-desc">
+            Chisanbop (치산법) turns your hands into a portable abacus. Represent 0–99 with both hands.
+          </p>
+          <div className="mm-chisanbop-hands">
+            <div className="mm-chisanbop-hand">
+              <h4>Right Hand — ones</h4>
+              <ul>
+                <li>Index = 1</li>
+                <li>Middle = 2</li>
+                <li>Ring = 3</li>
+                <li>Pinky = 4</li>
+                <li>Thumb = 5</li>
+              </ul>
+            </div>
+            <div className="mm-chisanbop-hand">
+              <h4>Left Hand — tens</h4>
+              <ul>
+                <li>Index = 10</li>
+                <li>Middle = 20</li>
+                <li>Ring = 30</li>
+                <li>Pinky = 40</li>
+                <li>Thumb = 50</li>
+              </ul>
+            </div>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: 'var(--t2)', lineHeight: 1.7 }}>
+            Example — show 37: left ring (30) + right thumb (5) + right index+middle (2) = 37.
+            Use it to hold intermediate sums while your verbal memory handles the next number.
+          </p>
+        </>
+      ),
+    },
   ];
 
+  const current = pages[page];
+  const isLast = page === pages.length - 1;
+  const pct = ((page + 1) / pages.length) * 100;
+
   return (
-    <div className="mm-mode-screen">
-      <div className="mm-screen-header">
+    <div className="mm-lesson-screen">
+      <div className="mm-lesson-topbar">
         <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onBack}>← Back</button>
-        <h2>📖 Abacus Guide</h2>
-        <span style={{ color: 'var(--mm-text-muted)', fontSize: '0.85rem' }}>{page + 1}/{pages.length}</span>
+        <span className="mm-lesson-technique">🧮 Abacus Guide</span>
+        <span className="mm-lesson-step-counter">{page + 1} / {pages.length}</span>
       </div>
-      {pages[page]}
-      <div className="mm-lesson-actions" style={{ marginTop: 0 }}>
-        {page > 0 && <button className="mm-btn mm-btn-ghost" onClick={() => setPage(p => p - 1)}>← Previous</button>}
-        {page < pages.length - 1
-          ? <button className="mm-btn mm-btn-primary" onClick={() => setPage(p => p + 1)}>Next →</button>
-          : <button className="mm-btn mm-btn-primary mm-btn-lg" onClick={onBack}>Start Practicing →</button>}
+
+      <div className="mm-lesson-progress-track">
+        <div className="mm-lesson-progress-fill" style={{ width: `${pct}%` }} />
+      </div>
+
+      <div className="mm-lesson-dots">
+        {pages.map((_, i) => (
+          <button
+            key={i}
+            className={`mm-lesson-dot ${i === page ? 'active' : i < page ? 'done' : ''}`}
+            onClick={() => i <= page && setPage(i)}
+          />
+        ))}
+      </div>
+
+      <div className="mm-lesson-card">
+        <h2 className="mm-lesson-title">{current.emoji} {current.title}</h2>
+        {current.body}
+      </div>
+
+      <div className="mm-lesson-actions">
+        {page > 0 && (
+          <button className="mm-btn mm-btn-ghost" onClick={() => setPage(p => p - 1)}>← Prev</button>
+        )}
+        {isLast ? (
+          <button className="mm-btn mm-btn-primary mm-btn-lg" onClick={onBack}>Start Practicing →</button>
+        ) : (
+          <button className="mm-btn mm-btn-primary mm-btn-lg" onClick={() => setPage(p => p + 1)}>Next →</button>
+        )}
       </div>
     </div>
   );
 }
 
-// ── Read Drill: see abacus → type number ───────────────────────────────────────
+// ── Read Drill ──────────────────────────────────────────────────
 
 function ReadDrill({ onBack }: { onBack: () => void }) {
   const [digits, setDigits] = useState(2);
@@ -212,15 +230,18 @@ function ReadDrill({ onBack }: { onBack: () => void }) {
   }
 
   return (
-    <div className="mm-mode-screen">
-      <div className="mm-screen-header">
+    <div className="mm-setup-screen">
+      <div className="mm-setup-back">
         <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onBack}>← Back</button>
-        <h2>👁️ Read the Abacus</h2>
       </div>
-      <p className="mm-screen-desc">Look at the abacus below. Type the number it shows. Train until you can read it in under 1 second.</p>
+      <div className="mm-setup-hero">
+        <div className="mm-setup-icon">👁️</div>
+        <h1 className="mm-setup-title">Read It</h1>
+        <p className="mm-setup-desc">Look at the abacus and type the number it shows. Target: under 1 second.</p>
+      </div>
 
-      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.85rem', color: 'var(--mm-text-muted)' }}>Digits:</span>
+      <div className="mm-abacus-digit-row">
+        <span style={{ fontSize: '0.85rem', color: 'var(--t3)', fontWeight: 500 }}>Digits:</span>
         {[1, 2, 3, 4].map(d => (
           <button
             key={d}
@@ -231,11 +252,9 @@ function ReadDrill({ onBack }: { onBack: () => void }) {
       </div>
 
       {!result ? (
-        <div className="mm-abacus-drill">
-          <div className="mm-abacus-read-display">
-            <AbacusView value={target} minColumns={digits} />
-          </div>
+        <div className="mm-abacus-drill-card">
           <p className="mm-abacus-drill-prompt">What number does this show?</p>
+          <AbacusView value={target} minColumns={digits} />
           <AnswerInput onSubmit={handleAnswer} />
         </div>
       ) : (
@@ -245,7 +264,7 @@ function ReadDrill({ onBack }: { onBack: () => void }) {
   );
 }
 
-// ── Build Drill: see number → set the beads ────────────────────────────────────
+// ── Build Drill ─────────────────────────────────────────────────
 
 function BuildDrill({ onBack }: { onBack: () => void }) {
   const [digits, setDigits] = useState(2);
@@ -279,7 +298,7 @@ function BuildDrill({ onBack }: { onBack: () => void }) {
       question: `Set abacus to ${target}`,
       operands: [target],
       answer: target,
-      steps: [`The correct answer is ${target}`, `You showed ${userValue}`],
+      steps: [`Correct answer: ${target}`, `Your abacus showed: ${userValue}`],
     },
     userAnswer: userValue,
     wasCorrect,
@@ -289,15 +308,18 @@ function BuildDrill({ onBack }: { onBack: () => void }) {
   };
 
   return (
-    <div className="mm-mode-screen">
-      <div className="mm-screen-header">
+    <div className="mm-setup-screen">
+      <div className="mm-setup-back">
         <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onBack}>← Back</button>
-        <h2>🖐️ Build the Number</h2>
       </div>
-      <p className="mm-screen-desc">A number appears. Click the beads to represent it on the abacus, then hit Check.</p>
+      <div className="mm-setup-hero">
+        <div className="mm-setup-icon">🖐️</div>
+        <h1 className="mm-setup-title">Build It</h1>
+        <p className="mm-setup-desc">A number appears. Click the beads to show it on the abacus, then hit Check.</p>
+      </div>
 
-      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.85rem', color: 'var(--mm-text-muted)' }}>Digits:</span>
+      <div className="mm-abacus-digit-row">
+        <span style={{ fontSize: '0.85rem', color: 'var(--t3)', fontWeight: 500 }}>Digits:</span>
         {[1, 2, 3, 4].map(d => (
           <button
             key={d}
@@ -308,17 +330,15 @@ function BuildDrill({ onBack }: { onBack: () => void }) {
       </div>
 
       {phase === 'drill' ? (
-        <div className="mm-abacus-drill">
+        <div className="mm-abacus-drill-card">
           <p className="mm-abacus-drill-prompt">Set the abacus to:</p>
           <div className="mm-abacus-target">{target}</div>
           <InteractiveAbacus ref={abacusRef} numColumns={Math.max(digits, 2)} />
-          <button className="mm-btn mm-btn-primary mm-btn-lg" onClick={handleCheck}>
-            Check ✓
-          </button>
+          <button className="mm-btn mm-btn-primary mm-btn-lg" onClick={handleCheck}>Check ✓</button>
         </div>
       ) : (
-        <div className="mm-abacus-drill">
-          <p className="mm-abacus-drill-prompt">Target was:</p>
+        <div className="mm-abacus-drill-card">
+          <p className="mm-abacus-drill-prompt">The correct answer was:</p>
           <div className="mm-abacus-target">{target}</div>
           <AbacusView value={target} minColumns={Math.max(digits, 2)} />
           <FeedbackBanner result={fakeResult} onNext={() => nextProblem()} />
@@ -328,76 +348,74 @@ function BuildDrill({ onBack }: { onBack: () => void }) {
   );
 }
 
-// ── Free Play ──────────────────────────────────────────────────────────────────
+// ── Free Play ───────────────────────────────────────────────────
 
 function FreePlay({ onBack }: { onBack: () => void }) {
   return (
-    <div className="mm-mode-screen">
-      <div className="mm-screen-header">
+    <div className="mm-setup-screen">
+      <div className="mm-setup-back">
         <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onBack}>← Back</button>
-        <h2>🎮 Free Play</h2>
       </div>
-      <p className="mm-screen-desc">Just click around. Get comfortable with the abacus before drilling.</p>
-      <InteractiveAbacus numColumns={4} />
+      <div className="mm-setup-hero">
+        <div className="mm-setup-icon">🎮</div>
+        <h1 className="mm-setup-title">Free Play</h1>
+        <p className="mm-setup-desc">Click around freely. Get comfortable with the bead mechanics before drilling.</p>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <InteractiveAbacus numColumns={4} />
+      </div>
     </div>
   );
 }
 
-// ── Main AbacusMode ────────────────────────────────────────────────────────────
+// ── Main AbacusMode home ────────────────────────────────────────
 
 interface AbacusModeProps {
   onBack: () => void;
 }
 
+const SUB_MODES = [
+  { id: 'learn' as SubMode, emoji: '📖', title: 'Learn',     desc: 'Soroban mechanics, Anzan & Chisanbop guide' },
+  { id: 'free'  as SubMode, emoji: '🎮', title: 'Free Play', desc: 'Click beads freely, get comfortable'          },
+  { id: 'read'  as SubMode, emoji: '👁️', title: 'Read It',   desc: 'See bead config → type the number'            },
+  { id: 'build' as SubMode, emoji: '🖐️', title: 'Build It',  desc: 'See a number → set the beads correctly'       },
+];
+
 export function AbacusMode({ onBack }: AbacusModeProps) {
   const [sub, setSub] = useState<SubMode>('home');
 
   if (sub === 'learn') return <AbacusLesson onBack={() => setSub('home')} />;
-  if (sub === 'read') return <ReadDrill onBack={() => setSub('home')} />;
-  if (sub === 'build') return <BuildDrill onBack={() => setSub('home')} />;
-  if (sub === 'free') return <FreePlay onBack={() => setSub('home')} />;
+  if (sub === 'read')  return <ReadDrill    onBack={() => setSub('home')} />;
+  if (sub === 'build') return <BuildDrill   onBack={() => setSub('home')} />;
+  if (sub === 'free')  return <FreePlay     onBack={() => setSub('home')} />;
 
   return (
-    <div className="mm-abacus-mode">
-      <div className="mm-screen-header">
+    <div className="mm-setup-screen">
+      <div className="mm-setup-back">
         <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onBack}>← Back</button>
-        <h2>🧮 Abacus Training</h2>
       </div>
-
-      <p className="mm-screen-desc">
-        Master the soroban — the Japanese abacus used by mental arithmetic champions. Learn to read and set bead positions,
-        then graduate to visualizing the abacus entirely in your mind (Anzan). Also covers <strong>Chisanbop</strong> finger counting.
-      </p>
+      <div className="mm-setup-hero">
+        <div className="mm-setup-icon">🧮</div>
+        <h1 className="mm-setup-title">Abacus</h1>
+        <p className="mm-setup-desc">
+          Master the soroban used by mental arithmetic champions. Learn to read and set beads,
+          then visualize the entire abacus in your mind — Anzan.
+        </p>
+      </div>
 
       <div className="mm-abacus-sub-grid">
-        <button className="mm-abacus-sub-card" onClick={() => setSub('learn')}>
-          <div className="mm-abacus-sub-emoji">📖</div>
-          <div className="mm-abacus-sub-title">Learn</div>
-          <div className="mm-abacus-sub-desc">How the soroban works, Anzan & Chisanbop guide</div>
-        </button>
-
-        <button className="mm-abacus-sub-card" onClick={() => setSub('free')}>
-          <div className="mm-abacus-sub-emoji">🎮</div>
-          <div className="mm-abacus-sub-title">Free Play</div>
-          <div className="mm-abacus-sub-desc">Click beads freely, get comfortable</div>
-        </button>
-
-        <button className="mm-abacus-sub-card" onClick={() => setSub('read')}>
-          <div className="mm-abacus-sub-emoji">👁️</div>
-          <div className="mm-abacus-sub-title">Read It</div>
-          <div className="mm-abacus-sub-desc">See bead config → type the number</div>
-        </button>
-
-        <button className="mm-abacus-sub-card" onClick={() => setSub('build')}>
-          <div className="mm-abacus-sub-emoji">🖐️</div>
-          <div className="mm-abacus-sub-title">Build It</div>
-          <div className="mm-abacus-sub-desc">See a number → set the beads correctly</div>
-        </button>
+        {SUB_MODES.map(({ id, emoji, title, desc }) => (
+          <button key={id} className="mm-abacus-sub-card" onClick={() => setSub(id)}>
+            <div className="mm-abacus-sub-emoji">{emoji}</div>
+            <div className="mm-abacus-sub-title">{title}</div>
+            <div className="mm-abacus-sub-desc">{desc}</div>
+          </button>
+        ))}
       </div>
 
-      <div className="mm-abacus-lesson-section" style={{ fontSize: '0.85rem', color: 'var(--mm-text-muted)', lineHeight: 1.7 }}>
-        <strong style={{ color: 'var(--mm-text)' }}>Recommended path:</strong>{' '}
-        Learn → Free Play → Read It (1-digit) → Build It (1-digit) → increase digits → Flash Anzan
+      <div className="mm-abacus-tip">
+        <span className="mm-abacus-tip-label">Recommended path</span>
+        Learn → Free Play → Read It (1-digit) → Build It → increase digits → Flash Anzan
       </div>
     </div>
   );

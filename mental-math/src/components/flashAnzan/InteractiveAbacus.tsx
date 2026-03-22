@@ -52,8 +52,12 @@ export const InteractiveAbacus = forwardRef<InteractiveAbacusHandle, Interactive
       setCols(prev => {
         const next = prev.map((c, i) => {
           if (i !== colIdx) return c;
-          const earth = [...c.earth] as ColState['earth'];
-          earth[beadIdx] = !earth[beadIdx];
+          // Active beads are always contiguous from index 0 (closest to divider).
+          // Clicking bead i: if it's inactive, slide i+1 beads up; if active, slide back to i.
+          const currentCount = c.earth.filter(Boolean).length;
+          const newCount = beadIdx < currentCount ? beadIdx : beadIdx + 1;
+          const earth = [false, false, false, false] as ColState['earth'];
+          for (let j = 0; j < newCount; j++) earth[j] = true;
           return { ...c, earth };
         });
         onValueChange?.(totalValue(next));
