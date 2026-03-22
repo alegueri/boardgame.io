@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import type React from 'react';
 import type { SessionConfig } from '../../types/session';
 import type { Problem } from '../../types/problem';
 import { useSession } from '../../hooks/useSession';
@@ -14,9 +15,10 @@ interface DrillScreenProps {
   problems: Problem[];
   onComplete: (session: Session) => void;
   onQuit: () => void;
+  glowColor?: string;
 }
 
-export function DrillScreen({ config, problems, onComplete, onQuit }: DrillScreenProps) {
+export function DrillScreen({ config, problems, onComplete, onQuit, glowColor }: DrillScreenProps) {
   const { phase, session, currentProblem, lastResult, problemIndex, start, submitAnswer, next } = useSession(config, problems);
 
   const timer = useTimer(config.timerSeconds, () => {
@@ -41,7 +43,7 @@ export function DrillScreen({ config, problems, onComplete, onQuit }: DrillScree
   }
 
   return (
-    <div className="mm-drill-screen">
+    <div className="mm-drill-screen" style={glowColor ? { '--drill-glow': glowColor } as React.CSSProperties : undefined}>
       <div className="mm-drill-topbar">
         <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onQuit}>✕ Quit</button>
         <span className="mm-drill-mode">{config.mode}</span>

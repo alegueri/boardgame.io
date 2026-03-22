@@ -1,79 +1,74 @@
 import type { ProgressStore } from '../types/progress';
 import { TECHNIQUES } from '../constants/techniques';
 
-type Mode = 'foundations' | 'technique' | 'flashAnzan' | 'abacus' | 'progress';
+type Mode = 'foundations' | 'technique' | 'flashAnzan' | 'abacus' | 'tables' | 'progress';
 
 interface HomeScreenProps {
   store: ProgressStore;
   onSelectMode: (mode: Mode, techniqueId?: string) => void;
 }
 
+const MODES: { mode: Mode; emoji: string; title: string; desc: string; cls: string }[] = [
+  { mode: 'foundations', emoji: '🏗️', title: 'Foundations',  desc: 'Basic facts + spaced repetition', cls: 'mm-mode-foundations' },
+  { mode: 'tables',      emoji: '✖️', title: 'Times Tables', desc: 'Any combo, cutoff timer',         cls: 'mm-mode-tables'      },
+  { mode: 'flashAnzan',  emoji: '⚡', title: 'Flash Anzan',  desc: 'Soroban speed training',          cls: 'mm-mode-flash'       },
+  { mode: 'technique',   emoji: '🎯', title: 'Techniques',   desc: 'Benjamin & Vedic shortcuts',      cls: 'mm-mode-techniques'  },
+  { mode: 'abacus',      emoji: '🧮', title: 'Abacus',       desc: 'Soroban, Anzan & Chisanbop',      cls: 'mm-mode-abacus'      },
+  { mode: 'progress',    emoji: '📊', title: 'Progress',     desc: 'Streaks, speed & accuracy',       cls: 'mm-mode-progress'    },
+];
+
 export function HomeScreen({ store, onSelectMode }: HomeScreenProps) {
-  const today = new Date().toISOString().slice(0, 10);
-  const todayStats = store.dailyStats[today];
-  const todayCount = todayStats?.problemsSolved ?? 0;
-  const dailyGoal = 30;
+  const today      = new Date().toISOString().slice(0, 10);
+  const todayCount = store.dailyStats[today]?.problemsSolved ?? 0;
+  const dailyGoal  = 30;
+  const pct        = Math.min(100, (todayCount / dailyGoal) * 100);
+
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
     <div className="mm-home">
-      <div className="mm-home-header">
-        <div className="mm-home-title">
-          <h1>🧮 Mental Math Trainer</h1>
-          <p className="mm-home-subtitle">Build real speed. One session at a time.</p>
+      {/* Hero */}
+      <div className="mm-hero">
+        <div className="mm-hero-tag">Train Your Mind</div>
+        <h1>Mental<br/>Math</h1>
+        <p className="mm-hero-sub">{greeting}. Ready to get faster?</p>
+      </div>
+
+      {/* Streak + daily progress */}
+      <div className="mm-today-card">
+        <div className="mm-today-top">
+          <div className="mm-today-streak">
+            <span className="mm-streak-fire">🔥</span>
+            <span className="mm-streak-num">{store.streak}</span>
+            <span className="mm-streak-label">day streak</span>
+          </div>
+          <span className="mm-today-count">{todayCount} / {dailyGoal} today</span>
         </div>
-        <div className="mm-home-streak">
-          <span className="mm-streak-fire">🔥</span>
-          <span className="mm-streak-count">{store.streak}</span>
-          <span className="mm-streak-label">day streak</span>
+        <div className="mm-today-bar-track">
+          <div className="mm-today-bar-fill" style={{ width: `${pct}%` }} />
         </div>
       </div>
 
-      <div className="mm-daily-progress">
-        <div className="mm-daily-progress-label">
-          Today: {todayCount} / {dailyGoal} problems
-        </div>
-        <div className="mm-daily-bar-track">
-          <div
-            className="mm-daily-bar-fill"
-            style={{ width: `${Math.min(100, (todayCount / dailyGoal) * 100)}%` }}
-          />
+      {/* Mode cards */}
+      <div>
+        <div className="mm-section-label" style={{ marginBottom: '0.65rem' }}>Train</div>
+        <div className="mm-mode-grid">
+          {MODES.map(({ mode, emoji, title, desc, cls }) => (
+            <button key={mode} className={`mm-mode-card ${cls}`} onClick={() => onSelectMode(mode)}>
+              <div className="mm-mode-icon">{emoji}</div>
+              <div className="mm-mode-label">
+                <div className="mm-mode-title">{title}</div>
+                <div className="mm-mode-desc">{desc}</div>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="mm-mode-grid">
-        <button className="mm-mode-card mm-mode-foundations" onClick={() => onSelectMode('foundations')}>
-          <div className="mm-mode-emoji">🏗️</div>
-          <div className="mm-mode-title">Foundations</div>
-          <div className="mm-mode-desc">Automate basic facts with spaced repetition</div>
-        </button>
-
-        <button className="mm-mode-card mm-mode-flash" onClick={() => onSelectMode('flashAnzan')}>
-          <div className="mm-mode-emoji">⚡</div>
-          <div className="mm-mode-title">Flash Anzan</div>
-          <div className="mm-mode-desc">Soroban abacus speed training</div>
-        </button>
-
-        <button className="mm-mode-card mm-mode-mixed" onClick={() => onSelectMode('technique')}>
-          <div className="mm-mode-emoji">🎯</div>
-          <div className="mm-mode-title">Techniques</div>
-          <div className="mm-mode-desc">Arthur Benjamin's shortcuts & Vedic math</div>
-        </button>
-
-        <button className="mm-mode-card mm-mode-abacus" onClick={() => onSelectMode('abacus')}>
-          <div className="mm-mode-emoji">🧮</div>
-          <div className="mm-mode-title">Abacus</div>
-          <div className="mm-mode-desc">Soroban drills, Anzan & Chisanbop finger math</div>
-        </button>
-
-        <button className="mm-mode-card mm-mode-progress" onClick={() => onSelectMode('progress')} style={{ gridColumn: '1 / -1' }}>
-          <div className="mm-mode-emoji">📊</div>
-          <div className="mm-mode-title">Progress</div>
-          <div className="mm-mode-desc">Track your speed, accuracy & streaks</div>
-        </button>
-      </div>
-
-      <div className="mm-technique-section">
-        <h3>Techniques</h3>
+      {/* Technique list */}
+      <div>
+        <div className="mm-section-label" style={{ marginBottom: '0.65rem' }}>Techniques</div>
         <div className="mm-technique-list">
           {TECHNIQUES.filter(t => t.id !== 'foundations').map(t => {
             const unlocked = store.unlockedTechniques.includes(t.id);
@@ -90,8 +85,9 @@ export function HomeScreen({ store, onSelectMode }: HomeScreenProps) {
                 </div>
                 <div className="mm-technique-meta">
                   {'⭐'.repeat(t.difficulty)}
-                  {!unlocked && <span className="mm-lock">🔒</span>}
+                  {!unlocked && <span>🔒</span>}
                 </div>
+                <span className="mm-technique-chevron">›</span>
               </button>
             );
           })}

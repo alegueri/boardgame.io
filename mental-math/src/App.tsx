@@ -6,11 +6,12 @@ import { TechniqueTrainingMode } from './modes/TechniqueTrainingMode';
 import { FlashAnzanScreen } from './components/flashAnzan/FlashAnzanScreen';
 import { DashboardScreen } from './components/progress/DashboardScreen';
 import { AbacusMode } from './modes/AbacusMode';
+import { TimesTablesMode } from './modes/TimesTablesMode';
 import { recordResult } from './store/progressStore';
 import type { Session } from './types/session';
 import type { TechniqueId } from './types/problem';
 
-type AppMode = null | 'foundations' | 'technique' | 'flashAnzan' | 'abacus' | 'progress';
+type AppMode = null | 'foundations' | 'technique' | 'flashAnzan' | 'abacus' | 'tables' | 'progress';
 
 export default function App() {
   const { store, saveSession, unlock } = useProgress();
@@ -47,6 +48,10 @@ export default function App() {
 
   if (mode === 'abacus') {
     return <div className="mm-app"><AbacusMode onBack={() => setMode(null)} /></div>;
+  }
+
+  if (mode === 'tables') {
+    return <div className="mm-app"><TimesTablesMode onBack={() => setMode(null)} /></div>;
   }
 
   if (mode === 'foundations') {

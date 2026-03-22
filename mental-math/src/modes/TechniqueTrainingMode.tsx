@@ -56,10 +56,16 @@ export function TechniqueTrainingMode({ initialTechnique, unlockedTechniques, on
 
   if (subMode === 'pick' || !selected || !technique) {
     return (
-      <div className="mm-mode-screen">
-        <div className="mm-screen-header">
+      <div className="mm-setup-screen">
+        <div className="mm-setup-back">
           <button className="mm-btn mm-btn-ghost mm-btn-sm" onClick={onBack}>← Back</button>
-          <h2>🎯 Choose a Technique</h2>
+        </div>
+        <div className="mm-setup-hero">
+          <div className="mm-setup-icon">🎯</div>
+          <h1 className="mm-setup-title">Techniques</h1>
+          <p className="mm-setup-desc">
+            Shortcuts from Arthur Benjamin & Vedic math. Each unlocks with a quick lesson first.
+          </p>
         </div>
         <div className="mm-technique-list">
           {TECHNIQUES.filter(t => t.id !== 'foundations').map(t => {
@@ -67,7 +73,7 @@ export function TechniqueTrainingMode({ initialTechnique, unlockedTechniques, on
             return (
               <button
                 key={t.id}
-                className={`mm-technique-row ${unlocked ? 'unlocked' : ''}`}
+                className={`mm-technique-row ${unlocked ? 'unlocked' : 'locked'}`}
                 onClick={() => { setSelected(t.id); setSubMode('lesson'); }}
               >
                 <span className="mm-technique-emoji">{t.emoji}</span>
@@ -75,7 +81,11 @@ export function TechniqueTrainingMode({ initialTechnique, unlockedTechniques, on
                   <span className="mm-technique-title">{t.title}</span>
                   <span className="mm-technique-sub">{t.subtitle}</span>
                 </div>
-                <div className="mm-technique-meta">{'⭐'.repeat(t.difficulty)}</div>
+                <div className="mm-technique-meta">
+                  {'⭐'.repeat(t.difficulty)}
+                  {!unlocked && <span>🔒</span>}
+                </div>
+                <span className="mm-technique-chevron">›</span>
               </button>
             );
           })}
@@ -105,6 +115,7 @@ export function TechniqueTrainingMode({ initialTechnique, unlockedTechniques, on
       problems={problems}
       onComplete={onComplete}
       onQuit={() => setSubMode('pick')}
+      glowColor="rgba(191,90,242,0.13)"
     />
   );
 }
