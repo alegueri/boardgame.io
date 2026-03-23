@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { ProblemResult } from '../../types/problem';
 
 interface FeedbackBannerProps {
@@ -6,6 +7,14 @@ interface FeedbackBannerProps {
 }
 
 export function FeedbackBanner({ result, onNext }: FeedbackBannerProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Enter') onNext();
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [onNext]);
+
   const speedLabel = result.responseTimeMs < 1000 ? '⚡ Lightning!' :
     result.responseTimeMs < 2000 ? '🚀 Fast' :
     result.responseTimeMs < 4000 ? '👍 Good' : '🐢 Slow';

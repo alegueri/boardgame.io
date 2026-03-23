@@ -302,17 +302,18 @@ interface SummaryProps {
   results: ProblemResult[];
   tables: number[];
   timerSeconds: number | null;
+  initialCount: number;
   onRetry: () => void;
   onBack: () => void;
 }
 
-function Summary({ results, tables, timerSeconds, onRetry, onBack }: SummaryProps) {
+function Summary({ results, tables, timerSeconds, initialCount, onRetry, onBack }: SummaryProps) {
   // Only count first attempt at each unique problem for accuracy headline
   const firstAttempts = results.filter((r, i) =>
     results.findIndex(x => x.problem.id === r.problem.id && x.problem.question === r.problem.question) === i
   );
   const correct = firstAttempts.filter(r => r.wasCorrect).length;
-  const total = firstAttempts.length;
+  const total = initialCount;
   const accuracy = Math.round((correct / total) * 100);
   const avgTime = Math.round(firstAttempts.reduce((s, r) => s + r.responseTimeMs, 0) / total);
 
@@ -499,6 +500,7 @@ export function TimesTablesMode({ onBack }: TimesTablesModeProps) {
           results={results}
           tables={[...selectedTables].sort((a, b) => a - b)}
           timerSeconds={timerSeconds}
+          initialCount={problemCount}
           onRetry={handleRetry}
           onBack={() => setPhase('setup')}
         />
