@@ -218,12 +218,22 @@ function TablesDrill({ initialProblems, timerSeconds, onComplete, onQuit }: Dril
     }
   }
 
-  // Session ends when queue is empty after feedback
+  // Auto-advance after feedback — shorter delay for correct, longer for wrong/timeout
+  const resultsRef = useRef(results);
+  resultsRef.current = results;
+
   useEffect(() => {
-    if (phase === 'feedback' && queue.length === 0) {
-      // small delay so user sees the last feedback
-    }
-  }, [phase, queue.length]);
+    if (phase !== 'feedback') return;
+    const delay = lastResult?.wasCorrect ? 700 : 1400;
+    const id = setTimeout(() => {
+      if (queue.length === 0) {
+        onComplete(resultsRef.current);
+      } else {
+        setPhase('question');
+      }
+    }, delay);
+    return () => clearTimeout(id);
+  }, [phase]);
 
   if (!problem && phase === 'feedback') {
     // Last problem just answered — show final feedback then let user click Next to go to summary
